@@ -1,0 +1,28 @@
+{
+  "name": "lite-fetch",
+  "version": "0.1.0",
+  "description": "A http client base on Fetch API",
+  "main": "./lib/lite-fetch.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "deepmerge": "^2.0.0",
+    "isomorphic-fetch": "^2.2.1",
+    "querystring": "^0.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build:watch": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "http",
+    "request",
+    "client",
+    "fetch",
+    "rest"
+  ],
+  "author": "zhouheng.pan <zhouheng.pan@foxmail.com>",
+  "license": "MIT"
+}
