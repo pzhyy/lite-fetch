@@ -128,9 +128,9 @@ liteFetch.delete(url[, options]);
     form?: object;  // request body, will call `querystring.stringify()` and set to body
     body?: any;  // request body, Fetch's raw body
     query?: object;  // request query, will call `querystring.stringify()` and concat to url
-    params?: object;  // resquest params, will replace url params by regexp `/:([a-z][\w-_]*)/gi`
+    params?: object;  // resquest params, will replace url params by regexp `/:([a-z][\w-_]*)/g`
     before?: (options: object) => object;  // request before hook, need return `options`
-    after?: (response: object, resolve: any, reject: any) => void;  // request after hook, need call `resolve()` or `reject()` if change
+    after?: (response: object, resolve: () => void, reject: () => void) => void;  // request after hook, need call `resolve()` or `reject()` if change
     error?: (error: object) => void;  // request error hook
 }
 ```

@@ -22,7 +22,7 @@ interface Options {
     query?: object;
     params?: object;
     before?: (options: object) => object;
-    after?: (response: object, resolve: any, reject: any) => void;
+    after?: (response: object, resolve: () => void, reject: () => void) => void;
     error?: (error: object) => void,
 }
 
