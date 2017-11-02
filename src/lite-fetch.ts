@@ -1,8 +1,10 @@
 import 'isomorphic-fetch';
-import * as deepmerge from 'deepmerge';
 import * as querystring from 'querystring';
 import * as pkg from '../package.json';
-import { isEmpty } from './helper';
+import {
+    isEmpty,
+    mixin,
+} from './helper';
 
 interface Options {
     url?: string;
@@ -21,6 +23,7 @@ interface Options {
     params?: object;
     before?: (options: object) => object;
     after?: (response: object, resolve: any, reject: any) => void;
+    error?: (error: any) => void,
 }
 
 const version = (<any>pkg).version;
@@ -35,14 +38,15 @@ const defaultConfig: Options = {
     cache: 'default',  // default, no-store, reload, no-cache, force-cache, only-if-cached
     redirect: 'follow',  // follow, error, manual
     credentials: 'include',  // omit, same-origin, include
-    type: 'json',  // json, text, blob, formData, arrayBuffer
+    type: 'raw',  // raw, json, text, blob, formData, arrayBuffer
     timeout: 0,  // disabled
     before(options) { return options; },
     after(response, resolve, reject) {},
+    error(error) {},
 };
 
 export class LiteFetch {
-    public config: object = defaultConfig;
+    public config: any = defaultConfig;
     public version: string = version;
 
     constructor(options = {}) {
@@ -61,21 +65,24 @@ export class LiteFetch {
     }
 
     private transform(options: Options) {
-        const config = deepmerge(this.config, options);
+        const config: any = mixin({}, this.config, options);
 
         if (config.params && !isEmpty(config.params)) {
-            config.url = config.url.replace(/:([a-z][\w-_]*)/gi, (match, key) => {
+            config.url = config.url.replace(/:([a-z][\w-_]*)/g, (match, key) => {
                 return options.params[key];
             });
         }
+
         if (config.query && !isEmpty(config.query)) {
             const query: string = querystring.stringify(options.query);
             config.url += (config.url.indexOf('?') >= 0 ? '&' : '?') + query;
         }
+
         if (config.form && !isEmpty(config.form)) {
             config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
             config.body = querystring.stringify(config.form);
         }
+
         if (config.json && !isEmpty(config.json)) {
             config.headers['Content-Type'] = 'application/json; charset=UTF-8';
             config.body = JSON.stringify(options.json);
@@ -101,18 +108,18 @@ export class LiteFetch {
     }
 
     public set(options) {
-        this.config = deepmerge(this.config, options);
+        this.config = mixin({}, this.config, options);
     }
 
     public request(options) {
-        const beforeConfig = (<any>this.config).before(options) || options;
+        const beforeConfig = this.config.before(options) || options;
         const config = this.transform(beforeConfig);
         let timer = null;
 
         return new Promise((resolve, reject) => {
             if (config.timeout > 0) {
                 timer = setTimeout(() => {
-                    reject(new Error(`request timeout: ${config.timeout}ms.`));
+                    reject(new Error(`request timeout: ${config.timeout}ms`));
                 }, config.timeout);
             }
     
@@ -138,18 +145,23 @@ export class LiteFetch {
                         body: body,
                     };
 
-                    (<any>this.config).after(res, resolve, reject);
+                    this.config.after(res, resolve, reject);
 
                     if (response.ok) {
                         resolve(res);
                     } else {
                         reject(res);
                     }
+                }).catch(error => {
+                    clearTimeout(timer);
+                    this.config.after(error);
+                    reject(error);
                 });
 
                 return response;
             }).catch(error => {
                 clearTimeout(timer);
+                this.config.after(error);
                 reject(error);
             });
         });

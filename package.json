@@ -1,20 +1,22 @@
 {
   "name": "lite-fetch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A http client base on Fetch API",
+  "types": "./lib/lite-fetch.d.ts",
   "main": "./lib/lite-fetch.js",
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "deepmerge": "^2.0.0",
     "isomorphic-fetch": "^2.2.1",
     "querystring": "^0.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ava": "^0.23.0"
+  },
   "scripts": {
     "build:watch": "tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava --verbose --fail-fast test/test-*.js"
   },
   "keywords": [
     "http",
@@ -23,6 +25,14 @@
     "fetch",
     "rest"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pzhyy/lite-fetch.git"
+  },
   "author": "zhouheng.pan <zhouheng.pan@foxmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pzhyy/lite-fetch/issues"
+  },
+  "homepage": "https://github.com/pzhyy/lite-fetch#readme"
 }
