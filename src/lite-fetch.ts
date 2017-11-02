@@ -23,7 +23,7 @@ interface Options {
     params?: object;
     before?: (options: object) => object;
     after?: (response: object, resolve: any, reject: any) => void;
-    error?: (error: any) => void,
+    error?: (error: object) => void,
 }
 
 const version = (<any>pkg).version;

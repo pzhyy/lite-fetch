@@ -30,9 +30,8 @@ const liteFetch = new LiteFetch({
     before(options) {
         return options;
     },
-    after(response, resolve, reject) {
-
-    }
+    after(response, resolve, reject) { },
+    error(error) { }
 });
 
 // GET
@@ -124,14 +123,15 @@ liteFetch.delete(url[, options]);
     redirect?: string;  // value: [follow, error, manual]. default: follow
     credentials?: string;  // value: [omit, same-origin, include]. default: include
     timeout?: number;  // timeout in ms, 0 to disable. default: 0
-    type?: string;  // response body type, value: [json, text, blob, formData, arrayBuffer]. default: json
+    type?: string;  // response body type, value: [raw, json, text, blob, formData, arrayBuffer]. default: raw
     json?: object;  // request body, will call `JSON.stringify()` and set to body
     form?: object;  // request body, will call `querystring.stringify()` and set to body
     body?: any;  // request body, Fetch's raw body
     query?: object;  // request query, will call `querystring.stringify()` and concat to url
     params?: object;  // resquest params, will replace url params by regexp `/:([a-z][\w-_]*)/gi`
-    before?: Before;  // request before hook, need return `options`
-    after?: After;  // request after hook, need call `resolve()` or `reject()` if change
+    before?: (options: object) => object;  // request before hook, need return `options`
+    after?: (response: object, resolve: any, reject: any) => void;  // request after hook, need call `resolve()` or `reject()` if change
+    error?: (error: object) => void;  // request error hook
 }
 ```
 > Note:
