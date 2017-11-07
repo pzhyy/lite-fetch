@@ -6,7 +6,8 @@ import {
     mixin,
 } from './helper';
 
-interface Options {
+
+export interface Options {
     url?: string;
     method?: string;
     headers?: object;
@@ -46,10 +47,10 @@ const defaultConfig: Options = {
 };
 
 export class LiteFetch {
-    public config: any = defaultConfig;
+    public config: Options = defaultConfig;
     public version: string = version;
 
-    constructor(options = {}) {
+    constructor(options: Options = {}) {
         this.set(options);
         this.init();
     }
@@ -107,11 +108,11 @@ export class LiteFetch {
         }
     }
 
-    public set(options) {
+    public set(options: Options = {}) {
         this.config = mixin({}, this.config, options);
     }
 
-    public request(options) {
+    public request(options: Options = {}) {
         const beforeConfig = this.config.before(options) || options;
         const config = this.transform(beforeConfig);
         let timer = null;
@@ -150,18 +151,18 @@ export class LiteFetch {
                     if (response.ok) {
                         resolve(res);
                     } else {
+                        this.config.error(res);
                         reject(res);
                     }
                 }).catch(error => {
-                    clearTimeout(timer);
-                    this.config.after(error);
+                    this.config.error(error);
                     reject(error);
                 });
 
                 return response;
             }).catch(error => {
                 clearTimeout(timer);
-                this.config.after(error);
+                this.config.error(error);
                 reject(error);
             });
         });
