@@ -1,6 +1,6 @@
 {
   "name": "lite-fetch",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A http client base on Fetch API",
   "types": "./lib/lite-fetch.d.ts",
   "main": "./lib/lite-fetch.js",
